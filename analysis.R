@@ -8,7 +8,7 @@ x <- read.csv("data/freqAnalOff_MAMcsfreqBinsMM_FINAL.csv")
 x$FreqBinName <- paste0("FreqBin", x$FreqBin)
 
 # reshape the data so that it is wide instead of long
-x.reshape <- dcast(x, id+TimePt+Group~FreqBinName, value.var="emg50Cs")
+x.reshape <- dcast(x, id+TimePt+Group~FreqBinName, value.var="emg50")
 
 # Extract userful columns
 dat.useful <- x.reshape[, c("Group", paste0("FreqBin", 1:4))]
