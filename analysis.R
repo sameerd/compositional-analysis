@@ -53,11 +53,14 @@ x3 <- lapply(x3, function(z) split(z, z$Group))
 # Function to just extract columns named FreqBin
 ExtractFreqBins <- function(z.df) z.df[, grep("FreqBin", names(z.df))]
 
-# Plot the vectors (now the ones that dont add up to one will be forced to add up to one)
-# These are not the effects you seek
+x3.acomps <- lapply(x3, function(z) lapply(z, function(y) acomp(ExtractFreqBins(y))))
+
+# Plot the perturbation differences between the various time intervals
 op <- par(mfrow=c(3,2))
 for (i in 1:5) {
-  plot(rcomp(ExtractFreqBins(x3[[5]][[1]])), main=paste("Time point ", i ))
-  plot(rcomp(ExtractFreqBins(x3[[5]][[2]])), add=TRUE, col="red")
+  plot(x3.acomps[[i]][[1]] - x3.acomps[[1]][[1]])
+  plot(x3.acomps[[i]][[2]] - x3.acomps[[1]][[2]], add=TRUE, col="red")
 }
 par(op)
+
+
