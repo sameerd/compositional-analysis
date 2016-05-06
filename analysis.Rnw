@@ -1,3 +1,5 @@
+%\VignetteEngine{knitr::knitr}
+
 \documentclass{article}
 \usepackage[sc]{mathpazo}
 \usepackage[T1]{fontenc}
@@ -33,7 +35,7 @@ x.reshape <- dcast(x, id+TimePt+Group~FreqBinName, value.var="emg50")
 @
 
 
-<<verify1, cache=TRUE, fig=TRUE, echo=TRUE>>=
+<<verify1, cache=TRUE, echo=TRUE>>=
 # verify that the frequencies add up to 1
 freqsums <- x.reshape$FreqBin1 + x.reshape$FreqBin2 + x.reshape$FreqBin3 + x.reshape$FreqBin4
 plot(freqsums)
