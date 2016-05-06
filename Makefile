@@ -4,6 +4,10 @@
 
 %.pdf: %.tex
 	pdflatex $<
+	make clean
+	mv $@ /tmp
+	make very-clean
+	mv /tmp/$@ .
 
 analysis.pdf: analysis.tex
 
