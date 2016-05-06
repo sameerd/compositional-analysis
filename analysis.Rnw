@@ -16,26 +16,28 @@
  pdfstartview={XYZ null null 1}}
 \begin{document}
 
+<<setup-knitr, cache=FALSE, echo=FALSE>>=
+library(knitr)
+opts_chunk$set(fig.path="figure/compositional-", cache.path="cache/compositional-")
+@
+
 
 <<setup, cache=TRUE, echo=TRUE>>=
-
 library(compositions)
 library(reshape2)
 
 # read in the csv data
 x <- read.csv("data/freqAnalOff_MAMcsfreqBinsMM_FINAL.csv")
 
-
-# Change add a character version of FreqBin
+# add a character version of FreqBin
 x$FreqBinName <- paste0("FreqBin", x$FreqBin)
+# make group a factor with labels A and B
 x$Group <- factor(as.numeric(x$Group), levels=c(0, 1), labels=c("A", "B"))
-
 # reshape the data so that it is wide instead of long
 x.reshape <- dcast(x, id+TimePt+Group~FreqBinName, value.var="emg50")
 @
 
-
-<<verify1, cache=TRUE, echo=TRUE>>=
+<<verify1, cache=TRUE, echo=TRUE, fig.width=6, fig.height=4>>=
 # verify that the frequencies add up to 1
 freqsums <- x.reshape$FreqBin1 + x.reshape$FreqBin2 + x.reshape$FreqBin3 + x.reshape$FreqBin4
 plot(freqsums)
