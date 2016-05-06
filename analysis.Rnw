@@ -21,6 +21,7 @@ library(knitr)
 opts_chunk$set(fig.path="figure/compositional-", cache.path="cache/compositional-")
 @
 
+\section{Explore data}
 
 <<setup, cache=TRUE, echo=TRUE>>=
 library(compositions)
@@ -101,4 +102,49 @@ for (i in 1:5) {
 par(op)
 lapply(perturbs.acomps.A, mean)
 @
+
+\section{Difference of the means with 3 bins}
+<<comp-analysis-bin3, echo=TRUE, cache=TRUE>>=
+
+perturbs.acomps.A.alr <- lapply(perturbs.acomps.A, compositions::alr)
+perturbs.acomps.B.alr <- lapply(perturbs.acomps.B, compositions::alr)
+
+alr.remove.nas <- function(z) z[complete.cases(z),]
+
+library(Hotelling)
+print(Hotelling::hotelling.test(alr.remove.nas(perturbs.acomps.A.alr[[2]]), alr.remove.nas(perturbs.acomps.B.alr[[2]])))
+print(Hotelling::hotelling.test(alr.remove.nas(perturbs.acomps.A.alr[[3]]), alr.remove.nas(perturbs.acomps.B.alr[[3]])))
+print(Hotelling::hotelling.test(alr.remove.nas(perturbs.acomps.A.alr[[4]]), alr.remove.nas(perturbs.acomps.B.alr[[4]])))
+print(Hotelling::hotelling.test(alr.remove.nas(perturbs.acomps.A.alr[[5]]), alr.remove.nas(perturbs.acomps.B.alr[[5]])))
+@
+
+
+
+
+
+\section{Difference of the means with 4 bins}
+<<comp-analysis-bin4, echo=TRUE, cache=TRUE>>=
+x4.acomps <- lapply(x4, function(z) lapply(z, function(y) acomp(ExtractFreqBins(y))))
+
+perturbs.x4.acomps.A <- lapply(1:5, function(i) x4.acomps[[i]][["A"]] - x4.acomps[[1]][["A"]])
+perturbs.x4.acomps.B <- lapply(1:5, function(i) x4.acomps[[i]][["B"]] - x4.acomps[[1]][["B"]])
+
+perturbs.x4.acomps.A.alr <- lapply(perturbs.x4.acomps.A, compositions::alr)
+perturbs.x4.acomps.B.alr <- lapply(perturbs.x4.acomps.B, compositions::alr)
+
+alr.remove.nas <- function(z) z[complete.cases(z),]
+
+library(Hotelling)
+print(Hotelling::hotelling.test(alr.remove.nas(perturbs.x4.acomps.A.alr[[2]]), alr.remove.nas(perturbs.x4.acomps.B.alr[[2]])))
+print(Hotelling::hotelling.test(alr.remove.nas(perturbs.x4.acomps.A.alr[[3]]), alr.remove.nas(perturbs.x4.acomps.B.alr[[3]])))
+print(Hotelling::hotelling.test(alr.remove.nas(perturbs.x4.acomps.A.alr[[4]]), alr.remove.nas(perturbs.x4.acomps.B.alr[[4]])))
+print(Hotelling::hotelling.test(alr.remove.nas(perturbs.x4.acomps.A.alr[[5]]), alr.remove.nas(perturbs.x4.acomps.B.alr[[5]])))
+@
+
+
+
+
+
+
+
 \end{document}
