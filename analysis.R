@@ -55,12 +55,15 @@ ExtractFreqBins <- function(z.df) z.df[, grep("FreqBin", names(z.df))]
 
 x3.acomps <- lapply(x3, function(z) lapply(z, function(y) acomp(ExtractFreqBins(y))))
 
+perturbs.acomps.A <- lapply(1:5, function(i) x3.acomps[[i]][["A"]] - x3.acomps[[1]][["A"]])
+perturbs.acomps.B <- lapply(1:5, function(i) x3.acomps[[i]][["B"]] - x3.acomps[[1]][["B"]])
+
 # Plot the perturbation differences between the various time intervals
 op <- par(mfrow=c(3,2))
 for (i in 1:5) {
-  plot(x3.acomps[[i]][[1]] - x3.acomps[[1]][[1]])
-  plot(x3.acomps[[i]][[2]] - x3.acomps[[1]][[2]], add=TRUE, col="red")
+  plot(perturbs.acomps.A[[i]])
+  plot(perturbs.acomps.B[[i]], add=TRUE, col="red")
 }
 par(op)
 
-
+lapply(perturbs.acomps.A, mean)
