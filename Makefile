@@ -7,6 +7,11 @@
 
 analysis.pdf: analysis.tex
 
-.PHONY: clean
+.PHONY: clean deepclean
+
 clean:
 	rm -f *.log *.aux *.tex *.out *.sty
+
+
+deepclean: clean
+	cd cache; rm -f *
