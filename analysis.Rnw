@@ -28,25 +28,25 @@ library(compositions)
 library(reshape2)
 
 # read in the csv data
-x <- read.csv("data/freqAnalOff_MAMcsfreqBinsMM_FINAL.csv")
+x <- read.csv("data/June2016EmgFreqONLY_MamCS_bins.csv")
 
-# add a character version of FreqBin
-x$FreqBinName <- paste0("FreqBin", x$FreqBin)
+# add a character version of freqBin
+x$freqBinName <- paste0("freqBin", x$freqBin)
 # make group a factor with labels A and B
 x$Group <- factor(as.numeric(x$Group), levels=c(0, 1), labels=c("A", "B"))
 # reshape the data so that it is wide instead of long
-x.reshape <- dcast(x, id+TimePt+Group~FreqBinName, value.var="emg50")
+x.reshape <- dcast(x, ID+timePt+Group~freqBinName, value.var="perPower")
 @
 
 <<verify1, cache=TRUE, echo=TRUE, fig.width=6, fig.height=4>>=
 # verify that the frequencies add up to 1
-freqsums <- x.reshape$FreqBin1 + x.reshape$FreqBin2 + x.reshape$FreqBin3 + x.reshape$FreqBin4
+freqsums <- x.reshape$freqBin1 + x.reshape$freqBin2 + x.reshape$freqBin3 + x.reshape$freqBin4
 plot(freqsums)
 @
 
 <<verify2, cache=TRUE, echo=TRUE>>=
-# split all the data by TimePt
-x.split <- split(x.reshape, x.reshape$TimePt)
+# split all the data by timePt
+x.split <- split(x.reshape, x.reshape$timePt)
 
 # we are making an assumption here that all the patients are in the same order 
 # on each split. No way to verify this given the data because there is no patient 
@@ -55,12 +55,6 @@ all.equal(x.split[[1]]$Group, x.split[[2]]$Group)
 all.equal(x.split[[1]]$Group, x.split[[3]]$Group)
 all.equal(x.split[[1]]$Group, x.split[[4]]$Group)
 all.equal(x.split[[1]]$Group, x.split[[5]]$Group)
-
-# Lets make this explicit by making the id equal to the patient id
-# FIXME: VERIFY THIS FROM THE ORIGINAL DATA
-for(i in 2:5) {
-  x.split[[i]]$id <- x.split[[1]]$id
-}
 @
 
 <<setup2, echo=TRUE, cache=TRUE>>=
@@ -68,11 +62,11 @@ for(i in 2:5) {
 x4 <- x.split
 
 # Combine bins 1 and 2 so that we have data with 3 bins
-# Rename the combined bin FreqBin12
+# Rename the combined bin freqBin12
 x3 <- lapply(x4, function(z) {
-  z$FreqBin1 <- z$FreqBin1 + z$FreqBin2
-  z$FreqBin2 <- NULL
-  names(z) <- sub("FreqBin1", "FreqBin12", names(z))
+  z$freqBin1 <- z$freqBin1 + z$freqBin2
+  z$freqBin2 <- NULL
+  names(z) <- sub("freqBin1", "freqBin12", names(z))
   z
 })
 
@@ -80,12 +74,12 @@ x3 <- lapply(x4, function(z) {
 x4 <- lapply(x4, function(z) split(z, z$Group))
 x3 <- lapply(x3, function(z) split(z, z$Group))
 
-# Function to just extract columns named FreqBin
-ExtractFreqBins <- function(z.df) z.df[, grep("FreqBin", names(z.df))]
+# Function to just extract columns named freqBin
+ExtractfreqBins <- function(z.df) z.df[, grep("freqBin", names(z.df))]
 @
 
 <<comp-analysis, echo=TRUE, cache=TRUE>>=
-x3.acomps <- lapply(x3, function(z) lapply(z, function(y) acomp(ExtractFreqBins(y))))
+x3.acomps <- lapply(x3, function(z) lapply(z, function(y) acomp(ExtractfreqBins(y))))
 
 perturbs.acomps.A <- lapply(1:5, function(i) x3.acomps[[i]][["A"]] - x3.acomps[[1]][["A"]])
 perturbs.acomps.B <- lapply(1:5, function(i) x3.acomps[[i]][["B"]] - x3.acomps[[1]][["B"]])
@@ -124,7 +118,7 @@ print(Hotelling::hotelling.test(alr.remove.nas(perturbs.acomps.A.alr[[5]]), alr.
 
 \section{Difference of the means with 4 bins}
 <<comp-analysis-bin4, echo=TRUE, cache=TRUE>>=
-x4.acomps <- lapply(x4, function(z) lapply(z, function(y) acomp(ExtractFreqBins(y))))
+x4.acomps <- lapply(x4, function(z) lapply(z, function(y) acomp(ExtractfreqBins(y))))
 
 perturbs.x4.acomps.A <- lapply(1:5, function(i) x4.acomps[[i]][["A"]] - x4.acomps[[1]][["A"]])
 perturbs.x4.acomps.B <- lapply(1:5, function(i) x4.acomps[[i]][["B"]] - x4.acomps[[1]][["B"]])
